@@ -58,10 +58,6 @@ def findDuplicates(list):
 
 
 
-
-
-
-
 wordgraph = makeGraph('fourletterwords.txt')
 # print(wordgraph)
 #print(wordgraph)
@@ -112,8 +108,38 @@ def findPath(startingWord, endingWord, graphDictionary = theBestGraphEver):
                             ansStack.append(startingWord)
                             #print(ansStack)
                             current = None
-    ansStack.reverse()
-    return ansStack
+                            ansStack.reverse()
+                            return ansStack
 
 print(findPath("COAT", "SHIP"))
+print(findPath("COAT", "SLOW"))
+
+def wordToWordbfs(start, end, graphToUse = theBestGraphEver):
+        Q = queue.Queue()
+        visited = []
+        ans = []
+        parentDict = {}
+        Q.put(start)
+        visited.append(start)
+        while(Q.empty() == False):
+            vertex = Q.get()
+            for child in graphToUse.get(vertex):
+                if child not in visited:
+                    Q.put(child)
+                    visited.append(child)
+                    parentDict[child] = vertex
+                if child == end:
+                    current = end
+                    while current != None:
+                        ans.append(current)
+                        current = parentDict[current]
+                        if current == start:
+                            ans.append(start)
+                            current = None
+                            ans.reverse()
+                            return ans
+
+
+print(wordToWordbfs('COAT', 'SHIP'))
+print(wordToWordbfs('COAT', 'SLOW'))
 
