@@ -7,8 +7,24 @@ import string
 import queue
 from itertools import chain
 
-# 1. Build the graph based off a text of words
 
+# Sequences found for 'BOAT' to 'SHIP':
+
+# Depth first search sequence: ['COAT', 'COAX', 'HOAX', 'HOAS', 'HOYS', 'HOYA', 'HORA', 'HORN', 'HOON', 'HOOT', 'HOUT',
+# 'HOUR', 'HOER', 'HOED', 'HOND', 'HONK', 'HOWK', 'HOWL', 'YOWL', 'YOWS', 'YOUS', 'YOUK', 'YORK', 'YORP', 'YOOP', 'YOOF',
+#  'WOOF', 'WOOS', 'WOTS', 'WITS', 'WITH', 'WISH', 'WIST', 'WILT', 'WILY', 'WIRY', 'WIRE', 'WIVE', 'WOVE', 'WOKE', 'WAKE',
+#  'WAKF', 'WAIF', 'WAIT', 'WATT', 'TATT', 'TATU', 'TAPU', 'TAPS', 'TAYS', 'YAYS', 'YAMS', 'SAMS', 'SAMP', 'SALP', 'SALT',
+# 'SAUT', 'SAUL', 'SAIL', 'SAIR', 'STIR', 'STIM', 'STUM', 'STUN', 'STEN', 'STEY', 'STAY', 'STAW', 'STOW', 'STOT', 'SWOT',
+#  'SWOP', 'SWAP', 'SWAN', 'SPAN', 'SPAT', 'SPIT', 'SPIV', 'SHIV', 'SHIP']
+
+# Breadth first search sequence: ['COAT', 'CHAT', 'SHAT', 'SHIT', 'SHIP']
+# Further sequences for other words can be seen by running this Python file.
+# Analysis and selection of best algorithm can be found in the report for this homework.
+
+
+'''
+A simple function used to make a list of words from all the words in a given text file.
+'''
 def makeWordList(file):
     wordFile = open(file, 'r')
     solutionList = []
@@ -17,13 +33,19 @@ def makeWordList(file):
         solutionList.append(word)
     return solutionList
 
+wordList = makeWordList('fourletterwords.txt')
+
+
+'''
+A function that builds a graph based off what "bucket" each word fits into.
+'''
 def makeGraph(file):
     graph = {}
     dict = {}
     textFile = open(file, 'r')
-    for line in textFile:
+    for line in textFile: # For each line in the file
         word = line[:-1]
-        for i in range(len(word)):
+        for i in range(len(word)): # Iterate over the length of the string
             bucket = word[:i] + '_' + word[i+1:]  # Creates a "bucket" for every substring of the word where one letter is removed
             if bucket in dict:
                 dict[bucket].append(word) # If this bucket is already in the dictionary, we simply append the word to its proper key
@@ -31,24 +53,11 @@ def makeGraph(file):
                 dict[bucket] = [word] # Otherwise we add the new bucket and the word to the dictionary
     return dict
 
-def findNeighbors(word, dictionary):
-    ansList = []
-    finalList = []
-    c = []
-    for i in range(len(word)):
-        wordSplice = word[:i] + '_' + word[i+1:]
-        ansList.append(dictionary.get(wordSplice))
-    ansList = list(chain.from_iterable(ansList))
-    solution = findDuplicates(ansList)
-    del(solution[solution.index(word)])
-    return solution
+wordgraph = makeGraph('fourletterwords.txt')
 
-def makeNeighborQueue(neighbors):
-    neighborQueue = queue.Queue()
-    for neighbor in neighbors:
-        neighborQueue.put(neighbor)
-    return neighborQueue
-
+'''
+A function to find if there are in duplicate elements in a list.
+'''
 def findDuplicates(list):
     solution = []
     for element in list:
@@ -56,90 +65,134 @@ def findDuplicates(list):
             solution.append(element)
     return solution
 
+'''
+Given a word and a dictionary found from the makeGraph function, returns all the neighbors of the given word.
+'''
+def findNeighbors(word, dictionary):
+    ansList = []
+    for i in range(len(word)):
+        wordSplice = word[:i] + '_' + word[i+1:] # All the "buckets" the input word belongs to
+        ansList.append(dictionary.get(wordSplice)) # Appends all the values from these "buckets" to the list
+    ansList = list(chain.from_iterable(ansList))
+    solution = findDuplicates(ansList) # Checks for and removes any duplicates if found
+    del(solution[solution.index(word)]) # Makes sure that the original word is not in its list of neighbors
+    return solution
 
-
-wordgraph = makeGraph('fourletterwords.txt')
-# print(wordgraph)
-#print(wordgraph)
-# print(findNeighbors('BOAT', wordgraph))
-#print(wordgraph)
-wordList = makeWordList('fourletterwords.txt')
-# print(wordList)
-#print(wordgraph.get('_AHS'))
-
-
+'''
+Creates a more readable and understandable graph based off the data that we have from the first makeGraph function. This
+returns a graph where the keys are no longer buckets but words, and their respective values are lists of words that
+differ by one letter.
+'''
 def makeABetterGraph(wordList, graph = wordgraph):
     theRealGraph = {}
-    for word in wordList:
-        neighbors = findNeighbors(word, graph)
-        theRealGraph[word] = neighbors
+    for word in wordList: # For each word in the list of words from the file
+        neighbors = findNeighbors(word, graph) # Find all the neighbors of the word based off the graph made before
+        theRealGraph[word] = neighbors # Add the word and its neighbors to the graph
     return theRealGraph
 
-theBestGraphEver = makeABetterGraph(wordList)
-# print(theBestGraphEver)
+theBestGraphEver = makeABetterGraph(wordList) # The graph that we will actually use to do the search for paths to words
 
+'''
+Given the improved graph from the makeABetterGraph function, a starting word, and an ending word, this function finds
+a path from the starting word to the ending word based off the depth first search algorithm.
+'''
 def findPath(startingWord, endingWord, graphDictionary = theBestGraphEver):
-    stack = []
-    visited = {}
-    parentDict = {}
-    parentDict[startingWord] = 'This is the start! Yay!'
+    stack = [] # A stack to hold the nodes that still need to be visited
+    visited = {} # A dictionary that tells us if a node has been visited
+    parentDict = {} # A dictionary that holds the child to parent relationships for words in the graph
+    # parentDict[startingWord] = 'This is the start! Yay!'
     ansStack = []
     visited[startingWord] = False
-    stack.append(startingWord)
+    stack.append(startingWord) # Push the starting word to the stack
     # for vertex in graphDictionary.keys():
     #     visited[vertex] = False
     #     stack.append(vertex)
-    while len(stack) > 0:
-        word = stack.pop()
-        if(visited[word] == False):
-            visited[word] = True
-            for neighbor in graphDictionary.get(word):
+    while len(stack) > 0: # While there are elements in the stack
+        word = stack.pop() # Pop the first element from the stack
+        if(visited[word] == False): # If this element has not been visited
+            visited[word] = True # Set its visited value to True
+            for neighbor in graphDictionary.get(word): # For each one of this words' neighbors
                 if neighbor not in visited:
-                    stack.append(neighbor)
-                    parentDict[neighbor] = word
+                    stack.append(neighbor) # Push the neighbor to the stack
+                    parentDict[neighbor] = word # Add the child-parent pair to the parent dictionary
                     visited[neighbor] = False
-                if neighbor == endingWord:
-                    current = endingWord
+                if neighbor == endingWord: # If we find the ending word
+                    current = endingWord # Set the current word to the ending word to start
                     while current != None:
-                        ansStack.append(current)
+                        ansStack.append(current) # Append the current word to our answer
                         #print(ansStack)
-                        current = parentDict[current]
+                        current = parentDict[current] # Assign current to the current word's parent
                         if current == startingWord:
                             ansStack.append(startingWord)
                             #print(ansStack)
-                            current = None
-                            ansStack.reverse()
+                            current = None # Set current to none once the starting word is found
+                            ansStack.reverse() # Reverse the order of the stack to find the actual path the algorithm takes
                             return ansStack
 
-print(findPath("COAT", "SHIP"))
-print(findPath("COAT", "SLOW"))
+# Testing print statments to make sure the program is working
 
+# print(wordgraph)
+# print(wordgraph)
+# print(findNeighbors('BOAT', wordgraph))
+# print(wordgraph)
+# print(wordList)
+# print(wordgraph.get('_AHS'))
+# print(theBestGraphEver)
+
+# Depth First Search:
+print('Finding the path using the depth first search algorithm...')
+
+print('Start: COAT, End: SHIP' + '\n Path: ' + str(findPath("COAT", "SHIP")) + '\n')
+print('Start: COAT, End: SLOW' + '\n Path: ' + str(findPath("COAT", "SLOW")) + '\n')
+print('Start: SAIL, End: BALL' + '\n Path: ' + str(findPath('SAIL', 'BALL')) + '\n')
+print('Start: AFAR, End: MALL' + '\n Path: ' + str(findPath('AFAR', 'MALL')) + '\n')
+print('Start: ALAS, End: POST' + '\n Path: ' + str(findPath('ALAS', 'POST')) + '\n')
+print('Start: RAFT, End: PYRO' + '\n Path: ' + str(findPath('RAFT', 'PYRO')) + '\n')
+print('Start: ZOOM, End: TILT' + '\n Path: ' + str(findPath('ZOOM', 'TILT')) + '\n')
+print('Start: FARM, End: YOLK' + '\n Path: ' + str(findPath('FARM', 'YOLK')) + '\n')
+print('Start: YETI, End: SNOW' + '\n Path: ' + str(findPath('YETI', 'SNOW')) + '\n')
+
+print('\n')
+
+'''
+Finds the path from the starting word to the ending word based off the graph yielded from the makeABetterGraph function.
+This function uses breadth first search to find the path.
+'''
 def wordToWordbfs(start, end, graphToUse = theBestGraphEver):
-        Q = queue.Queue()
-        visited = []
+        Q = queue.Queue() # A queue to hold the nodes that we still have to visit
+        visited = [] # A list to hold the nodes that we have visited
         ans = []
-        parentDict = {}
-        Q.put(start)
-        visited.append(start)
-        while(Q.empty() == False):
-            vertex = Q.get()
-            for child in graphToUse.get(vertex):
-                if child not in visited:
-                    Q.put(child)
-                    visited.append(child)
-                    parentDict[child] = vertex
-                if child == end:
-                    current = end
+        parentDict = {} # A dictionary holding the child-parent relationship for any given node
+        Q.put(start) # Enqueue the starting wording
+        visited.append(start) # Mark it as visited
+        while(Q.empty() == False): # While the queue is not empty
+            vertex = Q.get() # Dequeue from the queue
+            for child in graphToUse.get(vertex): # For each child from the vertex
+                if child not in visited: # If the child has not been visited
+                    Q.put(child) # Enqueue the child
+                    visited.append(child) # Mark the child as visited
+                    parentDict[child] = vertex # Add the child parent relationship to the dictionary
+                if child == end: # If we find the ending word
+                    current = end # Set the current word to the ending word
                     while current != None:
-                        ans.append(current)
-                        current = parentDict[current]
-                        if current == start:
-                            ans.append(start)
-                            current = None
-                            ans.reverse()
+                        ans.append(current) # Append the current word to the answer path
+                        current = parentDict[current] # Set current to the current word's parent
+                        if current == start: # If we find the starting word
+                            ans.append(start) # Add it to the answer
+                            current = None # Stop our search
+                            ans.reverse() # Reverse the list to show the path
                             return ans
 
 
-print(wordToWordbfs('COAT', 'SHIP'))
-print(wordToWordbfs('COAT', 'SLOW'))
+# Breadth First Search:
+print('Finding the path using the breadth first search algorithm...')
 
+print('Start: COAT, End: SHIP' + '\n Path: ' + str(wordToWordbfs("COAT", "SHIP")) + '\n')
+print('Start: COAT, End: SLOW' + '\n Path: ' + str(wordToWordbfs("COAT", "SLOW")) + '\n')
+print('Start: SAIL, End: BALL' + '\n Path: ' + str(wordToWordbfs('SAIL', 'BALL')) + '\n')
+print('Start: AFAR, End: MALL' + '\n Path: ' + str(wordToWordbfs('AFAR', 'MALL')) + '\n')
+print('Start: ALAS, End: POST' + '\n Path: ' + str(wordToWordbfs('ALAS', 'POST')) + '\n')
+print('Start: RAFT, End: PYRO' + '\n Path: ' + str(wordToWordbfs('RAFT', 'PYRO')) + '\n')
+print('Start: ZOOM, End: TILT' + '\n Path: ' + str(wordToWordbfs('ZOOM', 'TILT')) + '\n')
+print('Start: FARM, End: YOLK' + '\n Path: ' + str(wordToWordbfs('FARM', 'YOLK')) + '\n')
+print('Start: YETI, End: SNOW' + '\n Path: ' + str(wordToWordbfs('YETI', 'SNOW')) + '\n')
