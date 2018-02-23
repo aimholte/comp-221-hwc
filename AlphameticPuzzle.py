@@ -8,6 +8,8 @@ import itertools
 # as follows: {'r': 4, 'u': 0, 'b': 7, 'e': 2, 's': 9, 'i': 5, 'a': 1, 'z': 3, 'k': 6, 'n': 8}
 # (This can be found by running this Python file as well)
 
+# Further analysis of the algorithm is included in the report file
+
 '''
 Given the words "Rubeus" and "Sirius", finds what permutation of numbers results in the word "Azkaban".
 '''
