@@ -10,14 +10,22 @@ from itertools import chain
 
 # Sequences found for 'BOAT' to 'SHIP':
 
-# Depth first search sequence: ['COAT', 'COAX', 'HOAX', 'HOAS', 'HOYS', 'HOYA', 'HORA', 'HORN', 'HOON', 'HOOT', 'HOUT',
-# 'HOUR', 'HOER', 'HOED', 'HOND', 'HONK', 'HOWK', 'HOWL', 'YOWL', 'YOWS', 'YOUS', 'YOUK', 'YORK', 'YORP', 'YOOP', 'YOOF',
-#  'WOOF', 'WOOS', 'WOTS', 'WITS', 'WITH', 'WISH', 'WIST', 'WILT', 'WILY', 'WIRY', 'WIRE', 'WIVE', 'WOVE', 'WOKE', 'WAKE',
-#  'WAKF', 'WAIF', 'WAIT', 'WATT', 'TATT', 'TATU', 'TAPU', 'TAPS', 'TAYS', 'YAYS', 'YAMS', 'SAMS', 'SAMP', 'SALP', 'SALT',
-# 'SAUT', 'SAUL', 'SAIL', 'SAIR', 'STIR', 'STIM', 'STUM', 'STUN', 'STEN', 'STEY', 'STAY', 'STAW', 'STOW', 'STOT', 'SWOT',
-#  'SWOP', 'SWAP', 'SWAN', 'SPAN', 'SPAT', 'SPIT', 'SPIV', 'SHIV', 'SHIP']
+# Depth first search sequence: 'BOAT', 'BOAS', 'BOYS', 'BOYO', 'BOZO', 'MOZO', 'MOZZ', 'MUZZ', 'TUZZ', 'TIZZ', 'JIZZ',
+# 'JAZZ', 'JAZY', 'JAXY', 'WAXY', 'WAVY', 'WAVE', 'WAWE', 'WAWS', 'WAYS', 'WEYS', 'WETS', 'WETA', 'WENA', 'WENT', 'WEST',
+#  'WOST', 'WORT', 'WORN', 'WOON', 'WOOS', 'WOPS', 'TOPS', 'TOPO', 'TORO', 'TORY', 'TOWY', 'TOWT', 'TOUT', 'TOUR', 'YOUR',
+#  'YOUS', 'YOWS', 'YOWL', 'YAWL', 'YAWP', 'YAUP', 'YAUD', 'YARD', 'YARR', 'YAAR', 'YEAR', 'YEAS', 'YEPS', 'YUPS', 'YUKS',
+#  'YUKY', 'PUKY', 'PUKU', 'PUPU', 'PUPA', 'PUNA', 'PUNT', 'PUTT', 'PUTZ', 'LUTZ', 'LUTE', 'LURE', 'LURS', 'LUVS', 'LAVS',
+# 'LAVA', 'LANA', 'LANX', 'LYNX', 'LYNE', 'LYSE', 'LOSE', 'LOSS', 'LOTS', 'LOTO', 'LOGO', 'LOGY', 'POGY', 'POXY', 'PIXY',
+#  'PITY', 'PITS', 'PISS', 'PISO', 'PESO', 'PEPO', 'REPO', 'REPP', 'REAP', 'REAN', 'REIN', 'REIS', 'REWS', 'TEWS', 'TENS',
+# 'TENE', 'TETE', 'TETH', 'TECH', 'TICH', 'TICS', 'TILS', 'TILT', 'TIPT', 'TIPI', 'TITI', 'ZITI', 'ZITE', 'ZINE', 'ZINS',
+#  'ZIPS', 'ZAPS', 'ZAGS', 'YAGS', 'YAGI', 'YOGI', 'YOGH', 'YODH', 'YODE', 'YORE', 'YORP', 'YOOP', 'YOOF', 'ROOF', 'ROOT',
+# 'RONT', 'RONG', 'RUNG', 'RUNS', 'RUTS', 'RUTH', 'RUSH', 'RUST', 'RAST', 'RASP', 'RAMP', 'RAMS', 'RAHS', 'PAHS', 'PARS',
+#  'PART', 'PACT', 'PACY', 'PALY', 'PALP', 'PULP', 'PULS', 'PUYS', 'PRYS', 'PROS', 'PROW', 'PLOW', 'PLOY', 'PLAY', 'PLAT',
+# 'PYAT', 'PYAS', 'PYES', 'PEES', 'PEER', 'PUER', 'PURR', 'PURL', 'PIRL', 'PIRN', 'PION', 'PHON', 'PHOT', 'PHUT', 'SHUT',
+#  'SHUN', 'SHIN', 'SHIP']
 
-# Breadth first search sequence: ['COAT', 'CHAT', 'SHAT', 'SHIT', 'SHIP']
+
+# Breadth first search sequence: ['BOAT', 'BHAT', 'SHAT', 'SHIT', 'SHIP']
 # Further sequences for other words can be seen by running this Python file.
 # Analysis and selection of best algorithm can be found in the report for this homework.
 
@@ -142,7 +150,7 @@ def findPath(startingWord, endingWord, graphDictionary = theBestGraphEver):
 # Depth First Search:
 print('Finding the path using the depth first search algorithm...')
 
-print('Start: COAT, End: SHIP' + '\n Path: ' + str(findPath("COAT", "SHIP")) + '\n')
+print('Start: COAT, End: SHIP' + '\n Path: ' + str(findPath("BOAT", "SHIP")) + '\n')
 print('Start: COAT, End: SLOW' + '\n Path: ' + str(findPath("COAT", "SLOW")) + '\n')
 print('Start: SAIL, End: BALL' + '\n Path: ' + str(findPath('SAIL', 'BALL')) + '\n')
 print('Start: AFAR, End: MALL' + '\n Path: ' + str(findPath('AFAR', 'MALL')) + '\n')
@@ -187,7 +195,7 @@ def wordToWordbfs(start, end, graphToUse = theBestGraphEver):
 # Breadth First Search:
 print('Finding the path using the breadth first search algorithm...')
 
-print('Start: COAT, End: SHIP' + '\n Path: ' + str(wordToWordbfs("COAT", "SHIP")) + '\n')
+print('Start: COAT, End: SHIP' + '\n Path: ' + str(wordToWordbfs("BOAT", "SHIP")) + '\n')
 print('Start: COAT, End: SLOW' + '\n Path: ' + str(wordToWordbfs("COAT", "SLOW")) + '\n')
 print('Start: SAIL, End: BALL' + '\n Path: ' + str(wordToWordbfs('SAIL', 'BALL')) + '\n')
 print('Start: AFAR, End: MALL' + '\n Path: ' + str(wordToWordbfs('AFAR', 'MALL')) + '\n')

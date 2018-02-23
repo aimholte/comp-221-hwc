@@ -37,5 +37,6 @@ def alphameticSolver(string1 = 'rubeus', string2 = 'sirius'):
             answer = permutation
             print(answer)
             print(dict)
+            break
 print(alphameticSolver())
 
